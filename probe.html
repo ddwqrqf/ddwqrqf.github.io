@@ -36,7 +36,7 @@ pre { white-space: pre-wrap; word-break: break-all; background: #f4f4f4; padding
     log('[window keys] ' + (hits.length ? hits.join(', ') : '(none)'));
 
     // 2. 已知/疑似 bridge 名称精确探测并列出方法
-    var names = ['jsExchange', 'androidToJS', 'AndroidToJS', 'androidToJs', 'android',
+    var names = ['Verification', 'verification', 'jsExchange', 'androidToJS', 'AndroidToJS', 'androidToJs', 'android',
                  'oxWeb', 'TDBridge', 'NBSJSBridge', 'nbsJsBridge', 'NebulaJsBridge',
                  'bankJSBridge', 'zgcBridge', 'appBridge', 'JsToApp'];
     for (var i = 0; i < names.length; i++) {
@@ -65,6 +65,13 @@ pre { white-space: pre-wrap; word-break: break-all; background: #f4f4f4; padding
         } catch (e) {
             log('[CALL] ' + path + ' err: ' + e);
         }
+    }
+    if (window.Verification) {
+        tryCall(window.Verification, 'nativeWebGetAccessToken');
+        tryCall(window.Verification, 'nativeWebGetUserLocation');
+        tryCall(window.Verification, 'nativeWebGetAppMac');
+        tryCall(window.Verification, 'nativeWebContextSessionGet');
+        tryCall(window.Verification, 'nativeWebContextSecureGet');
     }
     if (window.jsExchange) {
         tryCall(window.jsExchange, 'nativeWebGetAccessToken');
